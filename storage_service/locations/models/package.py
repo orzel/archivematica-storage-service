@@ -1144,7 +1144,7 @@ class Package(models.Model):
         # Replace preservation derivatives
         reingest_objects_dir = os.path.join(reingest_full_path, 'data', 'objects')
         original_objects_dir = os.path.join(path, 'data', 'objects')
-        preservation_regex = r'(.+)-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}'
+        preservation_regex = r'(.+)-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}(.*)'
         # Walk through all files
         for dirpath, _, filepaths in os.walk(reingest_objects_dir):
             for filepath in filepaths:
@@ -1155,8 +1155,11 @@ class Package(models.Model):
                     original_preservation_path = reingest_preservation_path.replace(reingest_objects_dir, original_objects_dir)
                     # Check for another preservation derivative and delete
                     dest_dir = os.path.dirname(original_preservation_path)
-                    dupe_preservation_regex = match.group(1) + r'-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}'
+                    dupe_preservation_regex = match.group(1) + r'-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}' + match.group(2)
                     for p in os.listdir(dest_dir):
+                        # Don't delete if the 'duplicate' is the original
+                        if filepath == p:
+                            continue
                         if re.match(dupe_preservation_regex, p):
                             del_path = os.path.join(dest_dir, p)
                             LOGGER.info('Deleting %s', del_path)
