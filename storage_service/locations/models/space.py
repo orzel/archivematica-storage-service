@@ -427,6 +427,16 @@ class Space(models.Model):
         if not dir_path:
             return
         try:
+            LOGGER.debug('FOX: os.makedirs in models/space')
+
+            LOGGER.debug('dir_path')
+            LOGGER.debug(dir_path)
+            LOGGER.debug(type(dir_path))
+
+            LOGGER.debug('mode')
+            LOGGER.debug(mode)
+            LOGGER.debug(type(mode))
+
             os.makedirs(dir_path, mode)
         except os.error as e:
             # If the leaf node already exists, that's fine
